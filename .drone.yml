@@ -5,14 +5,20 @@ pipeline:
       - go get
       - go build
       - go test
+    when:
+      branch: master
 
   frontend:
     image: node:6
     commands:
       - npm install
       - npm test
+    when:
+      branch: master
 
   # notify:
   #   image: plugins/slack
   #   channel: developers
   #   username: drone
+  # when:
+  #   status: [ success, failure ]
