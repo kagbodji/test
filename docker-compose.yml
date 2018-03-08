@@ -9,6 +9,7 @@ services:
     volumes:
       - ./drone:/var/lib/drone
     restart: always
+    env_file: taskapp/.env
     environment:
       # - GIN_MODE=release
       - DRONE_OPEN=true
