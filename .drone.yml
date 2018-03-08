@@ -6,7 +6,7 @@ pipeline:
     commands:
       - sleep 120
       - php vendor/bin/phpunit
-    branches: [ master, staging ]
+    # branches: [ master, staging ]
   
 services:
   # laravel for the backend
