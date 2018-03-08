@@ -4,6 +4,7 @@ pipeline:
   # laravel for the backend
   app:
     build:
+      image: php:7.1.5-fpm
       context: ./
       dockerfile: docker/app.dockerfile
     working_dir: /var/www
@@ -13,19 +14,20 @@ pipeline:
       - "DB_PORT=3306"
       - "DB_HOST=database"
     commands:
+      - apt-get update && apt-get install -y libmcrypt-dev mysql-client libmagickwand-dev --no-install-recommends && docker-php-ext-install mcrypt pdo_mysql
       - php vendor/bin/phpunit
     branches: [ master, staging ]
 
   # vuejs for the frontend
-  web:
-    build:
-      context: ./
-      dockerfile: docker/web.dockerfile
-    working_dir: /var/www
-    volumes_from:
-      - app
-    ports:
-      - 8090:80
+  # web:
+  #   build:
+  #     context: ./
+  #     dockerfile: docker/web.dockerfile
+  #   working_dir: /var/www
+  #   volumes_from:
+  #     - app
+  #   ports:
+  #     - 8090:80
     # commands:
     #   - npm run lint
     # branches: [ master staging ]
