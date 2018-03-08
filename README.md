@@ -1,9 +1,9 @@
 # Task App
 this is a simple task app built to learn/test Laravel/VueJS
 
-03/07/2018: create a sample application from the excellent tutorials at
+03/07/2018: create a sample application from the tutorials found at (with some modifications):  
             https://medium.com/@shakyShane/laravel-docker-part-1-setup-for-development-e3daaefaf3c  
-            http://felicianoprochera.com/simple-task-app-with-laravel-5-3-and-vuejs/
+            http://felicianoprochera.com/simple-task-app-with-laravel-5-3-and-vuejs/  
             https://medium.com/@connorleech/build-a-task-list-with-laravel-5-4-and-vue-2-9be0bba06801
 
 **how to use:**
@@ -13,4 +13,5 @@ First run will take a few minutes as it will pull teh container images from dock
 3. execute `docker-compose exec app php artisan key:generate` to set the application key
 4. execute `npm install` to install dependencies such as vuejs, gulp, and bootstrap
 5. execute `docker-compose exec app php artisan migrate` to create db schema
-6. navigate to `http://localhost:8090` in your browser. You should see the app
+6. execute `npm run dev` to compile js and css assets
+6. navigate to `http://localhost:8090` in your browser. You should see the task app
