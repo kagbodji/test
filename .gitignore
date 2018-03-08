@@ -1,0 +1,7 @@
+*.env
+*.bak
+.tags
+.tags.tmp
+tags
+*.swp
+drone.sqlite
