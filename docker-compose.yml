@@ -20,6 +20,8 @@ services:
       - DRONE_SECRET=${DRONE_SECRET}
       - DRONE_ADMIN=admin
       - DRONE_GITHUB_CONTEXT=continuous-integration/drone
+      - DRONE_YAML=${DRONE_YAML}
+      # - GIN_MODE=release
 
   drone-agent:
     image: drone/agent:0.8
