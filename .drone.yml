@@ -1,7 +1,8 @@
 version: '2'
 
 pipeline:
-  image: app
+  backend:
+    image: app
     commands:
       - sleep 120
       - php vendor/bin/phpunit
