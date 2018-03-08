@@ -1,10 +1,16 @@
 version: '2'
 
 pipeline:
+  image: app
+    commands:
+      - sleep 120
+      - php vendor/bin/phpunit
+    branches: [ master, staging ]
+  
+services:
   # laravel for the backend
   app:
     build:
-      image: php:7.1.5-fpm
       context: ./
       dockerfile: docker/app.dockerfile
     working_dir: /var/www
@@ -13,10 +19,6 @@ pipeline:
     environment:
       - "DB_PORT=3306"
       - "DB_HOST=database"
-    commands:
-      - apt-get update && apt-get install -y libmcrypt-dev mysql-client libmagickwand-dev --no-install-recommends && docker-php-ext-install mcrypt pdo_mysql
-      - php vendor/bin/phpunit
-    branches: [ master, staging ]
 
   # vuejs for the frontend
   # web:
@@ -32,7 +34,6 @@ pipeline:
     #   - npm run lint
     # branches: [ master staging ]
 
-services:
   # mysql for persistence
   database:
     image: mysql:5.7
