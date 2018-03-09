@@ -24,6 +24,7 @@ class ExampleTest extends TestCase {
     public function testFailingTest() {
         $_this = true;
         $_that = true;
+        $_that = false;
         /* $this->assertTrue($this == $that); */
     }
 }
