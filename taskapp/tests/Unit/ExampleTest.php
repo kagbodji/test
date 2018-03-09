@@ -23,7 +23,7 @@ class ExampleTest extends TestCase {
 
     public function testFailingTest() {
         $_this = true;
-        $_that = false;
+        $_that = true;
         /* $this->assertTrue($this == $that); */
     }
 }
