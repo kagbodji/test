@@ -1,59 +1,49 @@
-version: '2'
-
 pipeline:
-  backend:
-    image: app
+  build:
+    image: michalpodeszwa/docker-compose:latest
+    privileged: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     commands:
-      - sleep 120
-      - php vendor/bin/phpunit
-    # branches: [ master, staging ]
-  
-services:
-  # laravel for the backend
-  app:
-    build:
-      context: ./
-      dockerfile: docker/app.dockerfile
-    working_dir: /var/www
+      # rebuild the environment to make sure nothing broke (i.e., test for docker config changes)
+      # - docker-compose -f taskapp.docker-compose.yml up -d --build
+      - docker-compose -f taskapp.docker-compose.yml up -d
+      ## - until docker info >/dev/null 2>&1; do echo "Waiting for internal docker.." sleep 1 done
+      # - sleep 5 # sleep 10 minutes, wait for containers to fully come up
+    # when:
+    #   event: [pull_request]
+
+  test:
+    image: michalpodeszwa/docker-compose:latest
+    privileged: true
     volumes:
-      - ./taskapp:/var/www
-    environment:
-      - "DB_PORT=3306"
-      - "DB_HOST=database"
+      - /var/run/docker.sock:/var/run/docker.sock
+    commands:
+      # all this jazz because I can't figure out how to map the source folder in the container :()
+      # not sure why it doesn't work with this image (works on local just fine...)
+      # TODO: maybe use the rsync plugin for speedup?
+      - docker-compose -f taskapp.docker-compose.yml exec -T app rm -rf /var/www/*
+      - cd taskapp && docker cp ./ src_app_1:/var/www && cd ..
+      - docker-compose -f taskapp.docker-compose.yml exec -T app php vendor/bin/phpunit
+      # - docker-compose -f taskapp.docker-compose.yml exec -T app php vendor/bin/phpunit --verbose --tap
+    # when:
+    #   event: [pull_request]
 
-  # vuejs for the frontend
-  # web:
-  #   build:
-  #     context: ./
-  #     dockerfile: docker/web.dockerfile
-  #   working_dir: /var/www
-  #   volumes_from:
-  #     - app
-  #   ports:
-  #     - 8090:80
-    # commands:
-    #   - npm run lint
-    # branches: [ master staging ]
-
-  # mysql for persistence
-  database:
-    image: mysql:5.7
+  teardown:
+    # cleanup house
+    image: michalpodeszwa/docker-compose:latest
+    privileged: true
     volumes:
-      - dbdata:/var/lib/mysql
-    environment:
-      - "MYSQL_DATABASE=homestead"
-      - "MYSQL_USER=homestead"
-      - "MYSQL_PASSWORD=secret"
-      - "MYSQL_ROOT_PASSWORD=secret"
-    ports:
-        - "33061:3306"
+      - /var/run/docker.sock:/var/run/docker.sock
+    commands:
+      - docker-compose -f taskapp.docker-compose.yml down
+    when:
+      # always cleanup
+      status: [success, failure]
 
-volumes:
-  dbdata:
-
-#   notify:
-#     image: plugins/slack
-#     channel: developers
-#     username: drone
-#     when:
-#       status: [ success, failure ]
+  # pipeline:
+  #   slack:
+  #     image: plugins/slack
+  #     channel: dev
+  #     when:
+  #       status: [ success, failure ]

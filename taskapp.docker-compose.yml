@@ -12,6 +12,7 @@ services:
     environment:
       - "DB_PORT=3306"
       - "DB_HOST=database"
+      - "SOMEVAR=meh"
 
   # vuejs for the frontend
   web:
