@@ -12,6 +12,14 @@ pipeline:
     # when:
     #   event: [pull_request]
 
+  installdeps:
+    # cleanup house
+    image: michalpodeszwa/docker-compose:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    commands:
+      - cd taskapp && docker run --rm -v $(pwd):/app library/composer install && cd ..
+
   test:
     image: michalpodeszwa/docker-compose:latest
     volumes:
