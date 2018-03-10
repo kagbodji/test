@@ -1,7 +1,7 @@
 pipeline:
-  build:
+  buildapp:
     image: michalpodeszwa/docker-compose:latest
-    privileged: true
+    group: build
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     commands:
@@ -9,40 +9,33 @@ pipeline:
       # - docker-compose -f taskapp.docker-compose.yml up -d --build
       - docker-compose -f taskapp.docker-compose.yml up -d
       ## - until docker info >/dev/null 2>&1; do echo "Waiting for internal docker.." sleep 1 done
-      # - sleep 5 # sleep 10 minutes, wait for containers to fully come up
     # when:
     #   event: [pull_request]
 
   test:
     image: michalpodeszwa/docker-compose:latest
-    privileged: true
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     commands:
       # all this jazz because I can't figure out how to map the source folder in the container :()
       # not sure why it doesn't work with this image (works on local just fine...)
       # TODO: maybe use the rsync plugin for speedup?
-      - ls -l
       - docker-compose -f taskapp.docker-compose.yml exec -T app rm -rf /var/www/*
-      - echo $(docker ps | grep 'src_app')
-      - docker cp taskapp/. $(docker ps | grep 'src_app' | cut -d \  -f 1):/var/www
-      - docker-compose -f taskapp.docker-compose.yml exec -T app pwd && ls -l
+      - docker cp taskapp/. $(docker ps | grep -E '\w+_app' | cut -d \  -f 1):/var/www
       - docker-compose -f taskapp.docker-compose.yml exec -T app php vendor/bin/phpunit
-      # - docker-compose -f taskapp.docker-compose.yml exec -T app php vendor/bin/phpunit --verbose --tap
     # when:
     #   event: [pull_request]
 
-  teardown:
-    # cleanup house
-    image: michalpodeszwa/docker-compose:latest
-    privileged: true
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    commands:
-      - docker-compose -f taskapp.docker-compose.yml down
-    when:
-      # always cleanup
-      status: [success, failure]
+  # teardown:
+  #   # cleanup house
+  #   image: michalpodeszwa/docker-compose:latest
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   commands:
+  #     - docker-compose -f taskapp.docker-compose.yml down
+  #   when:
+  #     # always cleanup
+  #     status: [success, failure]
 
   # pipeline:
   #   slack:
