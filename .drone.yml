@@ -31,7 +31,7 @@ pipeline:
       #       or figure out how to map the volume correctly
       - docker-compose -f taskapp.docker-compose.yml exec -T app rm -rf /var/www/*
       - docker cp taskapp/. $(docker ps | grep '_app' | cut -d \  -f 1):/var/www
-      - docker-compose -f taskapp.docker-compose.yml exec -T app ls -l
+      - docker-compose -f taskapp.docker-compose.yml exec -T app php artisan key:generate
       - docker-compose -f taskapp.docker-compose.yml exec -T app php vendor/bin/phpunit
     # when:
     #   event: [pull_request]
