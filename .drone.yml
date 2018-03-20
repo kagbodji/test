@@ -25,12 +25,13 @@ pipeline:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     commands:
-      # all this jazz because I can't figure out how to map the source folder in the container :()
+      # all this jazz because I can't figure out how to map the source folder in the container :(
       # not sure why it doesn't work with this image (works on local just fine...)
       # TODO: maybe use the rsync plugin for speedup?
       #       or figure out how to map the volume correctly
       - docker-compose -f taskapp.docker-compose.yml exec -T app rm -rf /var/www/*
       - docker cp taskapp/. $(docker ps | grep '_app' | cut -d \  -f 1):/var/www
+      - docker cp taskapp/.env.example $(docker ps | grep '_app' | cut -d \  -f 1):/var/www/.env
       - docker-compose -f taskapp.docker-compose.yml exec -T app php artisan key:generate
       - docker-compose -f taskapp.docker-compose.yml exec -T app php vendor/bin/phpunit
     # when:
