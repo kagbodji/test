@@ -5,8 +5,7 @@ namespace Tests\Unit;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class ExampleTest extends TestCase
-{
+class ExampleTest extends TestCase {
     /**
      * A basic test example.
      *
@@ -24,6 +23,7 @@ class ExampleTest extends TestCase
 
     public function testFailingTest() {
         $_this = true;
+        $_that = true;
         $_that = false;
         /* $this->assertTrue($this == $that); */
     }
